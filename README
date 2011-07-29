@@ -1,0 +1,7 @@
+Author:  Oscar Koeroo <okoeroo@nikhef.nl>
+
+
+The follow set of scripts are used to work with OpenSSL in a large (distributed) PKI environment.
+
+It is a collection of scripts that were useful to me and that I want to share here.
+
