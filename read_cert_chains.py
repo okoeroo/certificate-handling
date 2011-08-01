@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 #import crypto
 import os
 
@@ -17,17 +19,20 @@ from OpenSSL.crypto import PKCS7Type, load_pkcs7_data
 from OpenSSL.crypto import NetscapeSPKI, NetscapeSPKIType
 #from OpenSSL.crypto import sign, verify
 
-import networkx as nx
+#import networkx as nx
+#G = nx.Graph()
 
 # os.path.split
 
 class CertificatePathFinder(object):
-    def __init__(self):
+    def __init__(self, cadir):
+        if cadir == None and cadir != '':
+            print "No CA directory given to print"
+            raise
+
         self.ca_certificates = []
-        G = nx.Graph()
 
-        self.load_ca_certificates('/etc/grid-security/certificates')
-
+        self.load_ca_certificates(cadir)
 
     def load_ca_certificates(self, cadir='/etc/grid-security/certificates'):
         for i in os.listdir(cadir):
@@ -46,14 +51,30 @@ class CertificatePathFinder(object):
 
     def indenter(self, indent):
         s = ""
-        for i in xrange(indent):
-            s += "    "
+        for i in xrange(indent * 4):
+            s += " "
 
         return s
 
+    def printAsOpenSSLoneline(self, x509name):
+        res = ''
+        for rdn in x509name.get_components():
+            res += '/'
+            res += rdn[0]
+            res += '='
+            res += rdn[1]
+
+        return res
+#        return str(x509name.get_components())
+
     def showChild(self, ca_d, ca_list, indent):
         ca = ca_d['cert']
-        print "CA depth %d : %s%s in file: %s" % (indent, self.indenter(indent), str(ca.get_subject().get_components()), ca_d['file'])
+        if indent == 0:
+            print "%s \"%s\"" % (self.indenter(indent), self.printAsOpenSSLoneline(ca.get_subject()))
+            print "%s     |     \->    File : %s, Depth: %d, Not Before: %s, Not After %s" % (self.indenter(indent), ca_d['file'], indent, ca.get_notBefore(), ca.get_notAfter())
+        else:
+            print "%s \___| -> \"%s\"" % (self.indenter(indent), self.printAsOpenSSLoneline(ca.get_subject()))
+            print "%s     |     \->    File : %s, Depth: %d, Not Before: %s, Not After %s" % (self.indenter(indent), ca_d['file'], indent, ca.get_notBefore(), ca.get_notAfter())
 #        print "CA depth %d : %s%s in file: %s" % (indent, self.indenter(indent), str(ca.get_issuer().get_components()),  ca_d['file'])
 
         for d in ca_list:
@@ -89,5 +110,5 @@ class CertificatePathFinder(object):
 #            print x508Name.get_components()
 
 
-m = CertificatePathFinder()
+m = CertificatePathFinder('/etc/grid-security/certificates')
 m.showCertificates()
