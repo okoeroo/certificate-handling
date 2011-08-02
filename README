@@ -1,7 +1,23 @@
-Author:  Oscar Koeroo <okoeroo@nikhef.nl>
+Author
+------
+Oscar Koeroo <okoeroo@nikhef.nl>
 
 
-The follow set of scripts are used to work with OpenSSL in a large (distributed) PKI environment.
+Used API
+--------
+http://packages.python.org/pyOpenSSL/openssl.html
+http://packages.python.org/pyOpenSSL/openssl-crypto.html
 
-It is a collection of scripts that were useful to me and that I want to share here.
 
+Background information
+----------------------
+The follow set of scripts are used to work with OpenSSL in a large
+(distributed) PKI environment.  It is a collection of scripts that were useful
+to me and that I want to share here.
+
+
+read_cert_chains.py
+-------------------
+Will print the contents of the /etc/grid-security/certificates and pretty print
+it.  In the code you'll have to state if you want to match all the *.0 files or
+*.pem. This is relative to the version of the IGTF distribution.
