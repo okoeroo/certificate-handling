@@ -13,7 +13,7 @@ use_shell = "/bin/bash"
 class MultiCertFileSplitter(object):
     def __init__(self, inputfile='/tmp/x509up_u501'):
         try:
-            f = open("/tmp/x509up_u501", "r")
+            f = open(inputfile, "r")
         except:
             sys.exit(1)
 
@@ -30,7 +30,7 @@ class MultiCertFileSplitter(object):
             if len(item) > 0:
                 pem_cert = "-----BEGIN " + item
 
-                tf = tempfile.NamedTemporaryFile(delete=False)
+                tf = tempfile.NamedTemporaryFile()
 
                 tf.file.write(pem_cert)
                 tf.file.flush()
@@ -48,11 +48,16 @@ class MultiCertFileSplitter(object):
 
 ############### MAIN ##############
 if __name__ == "__main__":
-    if len(sys.argv) == 0:
+    if len(sys.argv) == 1:
         proxyfile = "/tmp/x509up_u" + str(os.getuid())
+
+        print "Checking : " + proxyfile
         mcfs = MultiCertFileSplitter(proxyfile)
+    elif len(sys.argv) == 2:
+        print "Checking file : " + sys.argv[1]
+        mcfs = MultiCertFileSplitter(sys.argv[1])
     else:
-        mcfs = MultiCertFileSplitter()
+        print "No input will analyse your proxy file on the default location, or the given file as first argument. No exceptions."
 
 
 
